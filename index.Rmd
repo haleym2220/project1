@@ -19,32 +19,48 @@ tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
 
 ## Data Wrangling, Exploration, Visualization
 
-### Name and EID here
+### Haley Harnitchek hmh2475
 
 #### Introduction 
+*I chose my Spotify data and the classic rock song list from the fivethirtyeight data sets. I chose these because I wanted to see how often I listen to the songs in comparison to the amount of times they haave played on the radio. In addition, I grew up listening to class rock, and I still listen to it to this day. I wanted to see if I listen to it as often as I would like. I also wanted to see if there was a correlation between popular rock songs and which ones I listen to, so I can see if I was more likely to listen to them if they were popular.*
 
 Paragraph or two introducing your datasets and variables, why they are interesting to you, etc.
 
 ```{R}
 # read your datasets in here, e.g., with read_csv()
-
+library(tidyverse)
+classic_rock <- fivethirtyeight::classic_rock_song_list
+spotify_data <- read_csv("StreamingHistory0.csv")
 ```
-
+ 
 #### Tidying: Reshaping
 
 If your datasets are tidy already, demonstrate that you can reshape data with pivot wider/longer here (e.g., untidy and then retidy). Alternatively, it may be easier to wait until the wrangling section so you can reshape your summary statistics. Note here if you are going to do this.
 
 ```{R}
 # your tidying code (if applicable; can also wait until wrangling section)
+glimpse(spotify_data)
+spotify_data <- spotify_data %>% rename(Date = endTime, artist = artistName, song = trackName)
+spotify_data <- spotify_data %>% mutate(secPlayed = msPlayed/1000) %>% separate(Date, into = c("Date","Time"), sep=11, remove=F)
+spotify_data <- spotify_data %>% group_by(song) %>% mutate(my_playcount=n())
+spotify_data <- spotify_data %>% separate(Date, into = c("Year", "Month", "Day"), sep="-", remove=F) %>% separate(Time, into = c("Hour", "Minute", "Sec"), sep=":", remove=F)
+spotify_data <- spotify_data %>% select(-Date,-msPlayed, -Sec)
 ```
-
-    
+  
+```{R}
+glimpse(classic_rock)
+classic_rock %>% arrange(desc(playcount))
+classic_rock <- classic_rock %>% select(-playcount_has_year)
+```
 #### Joining/Merging
 
 ```{R}
 # your joining code
+song_match <- right_join(classic_rock,spotify_data, by=c("song"))
+anti_join(classic_rock,spotify_data, by=c("song"))
+song_match %>% summarize_all(function(x)sum(is.na(x)))
+song_match <- song_match %>%arrange(artist.x) %>% distinct(song,.keep_all = T)
 
-# your joining code
 ```
 
 Discussions of joining here. Feel encouraged to break up into more than once code chunk and discuss each in turn.
@@ -52,11 +68,20 @@ Discussions of joining here. Feel encouraged to break up into more than once cod
 ####  Wrangling
 
 ```{R}
-# your wrangling code
+# Use *all six* core `dplyr` functions (`filter, select, arrange, group_by, mutate, summarize`)
 
-# your wrangling code
 
-# your wrangling code
+# Use a `stringr` function such as str_detect or str_replace_all with regex at least once.
+
+# Using `dplyr`, create summary statistics (`mean, sd, var, n, quantile, min, max, n_distinct, cor`, etc) for each of your numeric variables
+song_match %>% summarize_if(is.numeric, list(min=min,max=max), na.rm=T)
+song_match %>% summarize_if(is.numeric, list(Q3=quantile), probs=.75, na.rm=T)
+song_match %>% summarize_if(is.numeric, list(Q1=quantile), probs=.25, na.rm=T)
+song_match %>% summarize_if(is.numeric, n_distinct)
+song_match %>% summarize_if(is.numeric, list(mean=mean), na.rm=T)
+song_match %>% summarize_if(is.numeric, list(sd=sd), na.rm=T)
+song_match %>% summarize_if(is.numeric, list(var=var), na.rm=T)
+song_match %>% select_if(is.numeric) %>% cor(use="pair")
 ```
 
 Your discussion of wrangling section here. Feel encouraged to break up into more than once code chunk and discuss each in turn.
@@ -65,7 +90,15 @@ Your discussion of wrangling section here. Feel encouraged to break up into more
 #### Visualizing
 
 ```{R}
-# your plot 1
+#- Create at least three plots of your choice with ggplot that highlight some of the more interesting features of your data.
+#Each plot should have at least two geom layers and at least two variables mapped to aesthetics
+#Each should make use of different geoms (don't make the same kind of plot twice)
+#At least one plot should correctly make use of `stat="summary"` 
+#Each plot should include both a theme and scale modification
+#Each should include a supporting paragraph describing the relationships being visualized and any trends that are apparent
+# It is fine to include more, but limit  
+ggplot(data = song_match, aes(x = release_year, y = my_playcount)) + geom_point(aes(size=1)) + geom_point(color="blue") + ggtitle("Frequency of Classic Rock Songs Played by Me")
+ggplot(data = song_match, aes(x = release_year, y = playcount)) + geom_point(aes(col="red", size=1)) + ggtitle("Frequency of Classic Rock Songs Played by Radio") 
 ```
 
 Your discussion of plot 1
