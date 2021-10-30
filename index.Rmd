@@ -27,7 +27,6 @@ tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
 Paragraph or two introducing your datasets and variables, why they are interesting to you, etc.
 
 ```{R}
-# read your datasets in here, e.g., with read_csv()
 library(tidyverse)
 classic_rock <- fivethirtyeight::classic_rock_song_list
 spotify_data <- read_csv("StreamingHistory0.csv")
@@ -35,90 +34,136 @@ spotify_data <- read_csv("StreamingHistory0.csv")
  
 #### Tidying: Reshaping
 
-If your datasets are tidy already, demonstrate that you can reshape data with pivot wider/longer here (e.g., untidy and then retidy). Alternatively, it may be easier to wait until the wrangling section so you can reshape your summary statistics. Note here if you are going to do this.
-
 ```{R}
-# your tidying code (if applicable; can also wait until wrangling section)
-glimpse(spotify_data)
 spotify_data <- spotify_data %>% rename(Date = endTime, artist = artistName, song = trackName)
-spotify_data <- spotify_data %>% mutate(secPlayed = msPlayed/1000) %>% separate(Date, into = c("Date","Time"), sep=11, remove=F)
 spotify_data <- spotify_data %>% group_by(song) %>% mutate(my_playcount=n())
-spotify_data <- spotify_data %>% separate(Date, into = c("Year", "Month", "Day"), sep="-", remove=F) %>% separate(Time, into = c("Hour", "Minute", "Sec"), sep=":", remove=F)
-spotify_data <- spotify_data %>% select(-Date,-msPlayed, -Sec)
 ```
+*To join the data sets, I changed the endTime variable to "Date", artistName to "artist", and trackName to "song". I also mutated my_playcount to see how often I lostened to specific songs.*
   
 ```{R}
+glimpse(spotify_data)
 glimpse(classic_rock)
-classic_rock %>% arrange(desc(playcount))
-classic_rock <- classic_rock %>% select(-playcount_has_year)
 ```
+
 #### Joining/Merging
 
 ```{R}
-# your joining code
-song_match <- right_join(classic_rock,spotify_data, by=c("song"))
-anti_join(classic_rock,spotify_data, by=c("song"))
-song_match %>% summarize_all(function(x)sum(is.na(x)))
-song_match <- song_match %>%arrange(artist.x) %>% distinct(song,.keep_all = T)
-
+song_match <- right_join(classic_rock,spotify_data, by=c("song","artist"))
+anti_join(classic_rock,spotify_data, by=c("song","artist"))
+semi_join(classic_rock,spotify_data, by=c("song","artist"))
+song_match <- song_match %>% arrange(artist) %>% distinct(song,.keep_all = T)
+glimpse(song_match)
 ```
-
-Discussions of joining here. Feel encouraged to break up into more than once code chunk and discuss each in turn.
+*I joined the data by using a right join because I wanted to keep the classic rock and Spotify data to see the difference between the amount of songs that I listened to that matched and the ones that did not (but only wanted to keep the ones that didn't match from the Spotify data). I also wanted to see the difference between the radio playcount and mine for each song to see how my listening habits compared to the general public. I joined by song and artist because there were times where the song name was the same but the artist was different for them. In total, there were 2,518 observations. Before tidying the spotify data, there were four columns, but after altering the columns, there were 5 distinct IDs. The classic rock data originally had 7 distinct ID numbers, but when joined, there were 5 distinct IDs. When right joined there were 11 distinct IDs because I joined them by "song" and "artist", which they have in common. IDs that appeared in the spotify data but not the classic rock data after wrangling were "Date", "secPlayed", and "my_playcount". IDs that appeared in the classic rock data but not the spotify data were "combined", "release_year", and "playcount". When I anti joined the data, there were 2114 observations that did not match between the two data sets when joined. I used semi join to see the observations the two data sets had in common. There were only 115 shared observations.*
 
 ####  Wrangling
 
 ```{R}
-# Use *all six* core `dplyr` functions (`filter, select, arrange, group_by, mutate, summarize`)
+song_match <- song_match %>% mutate(secPlayed = msPlayed/1000) %>% separate(Date, into = c("Date","Time"), sep=11, remove=F)
+song_match <- song_match %>% separate(Date, into=c("Year", "Month", "Day"), sep="-", remove=F) %>% separate(Time,into=c("Hour","Min","Sec"), sep=":", remove=F)
+song_match <- song_match %>% select(-Date,-msPlayed, -Sec, -Time)
+song_match <- song_match %>% select(-has_year, -playcount_has_year)
+glimpse(song_match)
+```
+*In this section, I wanted to create multiple different columns in order to see data throughout the year. Since msPlayed represents milliseconds, I divided by 1000 to get seconds instead. I separated Date into Date and Time because it was too much information in one column. I separated Date again into year, month, and day and Time into hour, min, and sec. I did this because I felt that it would be easier to analyze data throughout days and the past year of data with different variables. I deleted the Date, msPlayed, Sec, Time, and Year columns because I felt that they were redundant or unnecessary since I had mutated or separated them. I also deleted the has_year and play_count_has_year in it because I felt that those columns did not pertain to the comparison between the data as they were both logical vectors.* 
 
-
-# Use a `stringr` function such as str_detect or str_replace_all with regex at least once.
-
-# Using `dplyr`, create summary statistics (`mean, sd, var, n, quantile, min, max, n_distinct, cor`, etc) for each of your numeric variables
-song_match %>% summarize_if(is.numeric, list(min=min,max=max), na.rm=T)
+```{R}
+song_match %>% distinct(song) %>% filter(str_detect(song, "Day$"))
+```
+*Using str_detect, I was able to see what songs contain the word "day". There are only eight songs that contain this word in the data set.*
+```{R}
+song_match %>% summarize_all(function(x)sum(is.na(x)))
+```
+*This data shows how many NAs are present in this data set for each variable. The variable with the most NAs was release_year with 2412 N/As.*
+```{R}
+song_match %>% group_by(song) %>% arrange(desc(playcount))
+song_match %>% group_by(song) %>% arrange(desc(my_playcount))
+song_match %>% group_by(song,playcount) %>% na.omit %>% arrange(desc(my_playcount))
+song_match %>% group_by(artist) %>% summarize(n = n()) %>% arrange(desc(n))
+song_match %>% group_by(Year,Month,Day) %>% summarize(n = n()) %>% arrange(desc(n))
+```
+*The most listened song on the radio that was shared between the data sets was Dream On by Aerosmith with a playcount of 142 while mine was only a playcount of 3. My most listened song was "Edge of Midnight (Midnight Sky Remix)(feat. Stevie Nicks)" by Miley Cyrus with a person playcount of 37, which was not shared between the data sets. My most listened to song that was shared between the data sets was "Holiday / Boulevard of Broken Dreams by Green Day. I had a playcount of 13 while the radio had a playcount of 5. The artist that appears the most in this dataset is Green Day. I listened the most songs on September 21, 2021 since it appears the most in this data set. *
+```{R}
+song_match %>% summarize_if(is.numeric, list(min=min), na.rm=T)
+song_match %>% summarize_if(is.numeric, list(max=max), na.rm=T)
+```
+*These are the minimum and maximum values for all of the numeric variables in the data set. The ones with "_min" represent the minimum amount. The variables with the "_max" represent the maximum values.*
+```{R}
 song_match %>% summarize_if(is.numeric, list(Q3=quantile), probs=.75, na.rm=T)
 song_match %>% summarize_if(is.numeric, list(Q1=quantile), probs=.25, na.rm=T)
-song_match %>% summarize_if(is.numeric, n_distinct)
-song_match %>% summarize_if(is.numeric, list(mean=mean), na.rm=T)
-song_match %>% summarize_if(is.numeric, list(sd=sd), na.rm=T)
-song_match %>% summarize_if(is.numeric, list(var=var), na.rm=T)
-song_match %>% select_if(is.numeric) %>% cor(use="pair")
 ```
+*This data represents the first and third quantile of the data. The ones with "_Q1" represent the first quantile. The variables with the "Q3" represent the third quantile.*
+```{R}
+song_match %>% summarize_if(is.numeric, n_distinct)
+```
+*This data represents the distinct amounts of each numeric variable. The tells how many unique values of the numeric variables there are. *
+```{R}
+song_match %>% summarize_if(is.numeric, list(mean=mean), na.rm=T)
+```
+*This data represents the mean of each numeric variable.The ones with "_mean" represent the mean.*
 
-Your discussion of wrangling section here. Feel encouraged to break up into more than once code chunk and discuss each in turn.
+```{R}
+song_match %>% summarize_if(is.numeric, list(sd=sd), na.rm=T)
+```
+*This data represents the standard deviation of each numeric variable.The ones with "_sd" represent standard deviation.*
+```{R}
+song_match %>% group_by(song) %>% summarize(count=n()) %>% count
+song_match %>% group_by(artist) %>% summarize(count=n()) %>% count
+song_match %>% group_by(combined) %>% summarize(count=n()) %>% count
+```
+*In this data set, there are 666 unique artists for all 2518 individual songs. There are 114 values for the combined variable. *
 
+
+```{R}
+cor_song <- song_match %>% select_if(is.numeric) %>% cor(use="pair")
+tidycor <- cor_song %>% as.data.frame %>% rownames_to_column("var1") %>% pivot_longer(-1,names_to="var2",values_to="correlation")
+library(gt)
+
+tidycor %>% gt %>% tab_header(title=md("**Correlation Between Numeric Variables**"), subtitle=md("A table of my `song_match` correlation"))
+```
+*This data represents the correlation between each numeric variable. It seems that there is a positive correlation between the amount of times I play a song and the year a song was released. There also seems to be a negative correlation between the amount of times the radio plays with the year a song was released.*
 
 #### Visualizing
 
 ```{R}
-#- Create at least three plots of your choice with ggplot that highlight some of the more interesting features of your data.
-#Each plot should have at least two geom layers and at least two variables mapped to aesthetics
-#Each should make use of different geoms (don't make the same kind of plot twice)
-#At least one plot should correctly make use of `stat="summary"` 
-#Each plot should include both a theme and scale modification
-#Each should include a supporting paragraph describing the relationships being visualized and any trends that are apparent
-# It is fine to include more, but limit  
-ggplot(data = song_match, aes(x = release_year, y = my_playcount)) + geom_point(aes(size=1)) + geom_point(color="blue") + ggtitle("Frequency of Classic Rock Songs Played by Me")
-ggplot(data = song_match, aes(x = release_year, y = playcount)) + geom_point(aes(col="red", size=1)) + ggtitle("Frequency of Classic Rock Songs Played by Radio") 
+ggplot(data = song_match, aes(x = release_year, y = my_playcount)) + geom_point(aes(size=1)) + geom_point(color="blue") + ggtitle("Frequency of Classic Rock Songs Played By Me By Release Year")+ scale_y_continuous(name = "Frequency") + scale_x_continuous(name = "Song Release Year")+ theme(legend.position="none")
+
+ggplot(data = song_match, aes(x = release_year, y = playcount)) + geom_point(aes(col="red", size=1)) + ggtitle("Frequency of Classic Rock Songs Played on Radio By Release Year") + scale_y_continuous(name = "Frequency") + scale_x_continuous(name = "Song Release Year")+ theme(legend.position="none")
 ```
 
-Your discussion of plot 1
+*These two plots are comparing the amount plays of each song between the radio and myself depending on how recently the songs were released. I was more likely to listen to classic rock songs released between 1990-2005 while the radio was more likely to play classic rock songs from 1970-1990. This shows that I tend to appreciate that era of music more.*
 
 ```{R}
-# your plot 2
+ggplot(song_match, aes(x = Month, y = my_playcount))+
+  geom_bar(stat="summary", fun=mean, fill = "pink")+
+  geom_errorbar(stat="summary", fun.data=mean_se, color="blue") + theme(axis.text.x = element_text(angle=45, hjust=1), legend.position="none") + scale_y_continuous(name = "Average Personal Playcount") + ggtitle("Personal Playcount Per Month")
 ```
 
-Your discussion of plot 2
+*This graph shows the average amount of times I repeated a song last year. I apparently liked to re-listen to songs the most during December of 2020 with an average of about 4.7 plays. This could be due to the fact that Christmas is in December, which can lead to the constant repeat of songs.*
 
 ```{R}
-# your plot 3
+tidycor %>% ggplot(aes(var1,var2,fill=correlation))+ geom_tile()+ scale_fill_gradient2(low="red",mid="gray",high="blue")+ geom_text(aes(label=round(correlation,2)),color = "black", size = 4)+ theme(axis.text.x = element_text(angle = 90, hjust=1))+ coord_fixed()
 ```
 
-Your discussion of plot 3
+*This plot visualizes the correlation between all of the numeric statistics present in the data set. There were no significant findings in the correlation between the variables, but I did find it interesting that there is a positive correlation between release year and my playcount and a negative correlation between release year and the radio playcount. This chart visualizes the findings from the summary statistics data. Even though plot 1 shows that I tend to appreciate newer music more, this shows that that is not a significant finding as the correlation is not too strong r=0.44).*
 
 #### Concluding Remarks
 
-If any!
+```{R}
+#github stuff
+#to put in terminal
+#cd ~/project1 #cd to your project1 directory
+#git add .
+#git commit -m "proj1 update"
+#git remote add origin https://github.com/haleym2220/project1.git
+#git push origin main
+```
 
-
+```{R}
+#github stuff
+#to put in terminal
+#portfolio.Rmd
+#- i class="fa fa-chart-line"> < </i> [Project 1: Description] (https://haleym2220/github.io/project1)
+```
 
 
