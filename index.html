@@ -1644,7 +1644,7 @@ glimpse(song_match)</code></pre>
 ## $ Min          &lt;chr&gt; &quot;07&quot;, &quot;07&quot;, &quot;32&quot;, &quot;54&quot;, &quot;39&quot;, &quot;33&quot;, &quot;52&quot;, &quot;11&quot;, &quot;12&quot;, &quot;4…
 ## $ my_playcount &lt;int&gt; 5, 2, 1, 1, 1, 1, 1, 7, 6, 8, 7, 1, 1, 3, 4, 2, 1, 1, 3,…
 ## $ secPlayed    &lt;dbl&gt; 200.333, 1.429, 1.880, 204.826, 1.880, 29.823, 6.389, 15…</code></pre>
-<p><em>In this section, I wanted to create multiple different columns in order to see data throughout the year. Since msPlayed represents milliseconds, I divided by 1000 to get seconds instead. I separated Date into Date and Time because it was too much information in one column. I separated Date again into year, month, and day and Time into hour, min, and sec. I did this because I felt that it would be easier to analyze data throughout days and the past year of data with different variables. I deleted the Date, msPlayed, Sec, Time, and Year columns because I felt that they were redundant or unnecessary since I had mutated or separated them. I also deleted the has_year and play_count_has_year in it because I felt that those columns did not pertain to the comparison between the data as they were both logical vectors.</em></p>
+<p><em>In this section, I wanted to create multiple different columns in order to see data throughout the year. Since msPlayed represents milliseconds, I divided by 1000 to get seconds instead. I separated Date into Date and Time because it was too much information in one column. I separated Date again into year, month, and day and Time into hour, min, and sec. I did this because I felt that it would be easier to analyze data throughout days and the past year of data with different variables. I deleted the Date, msPlayed, Sec, and Time columns because I felt that they were redundant or unnecessary since I had mutated or separated them. I also deleted the has_year and play_count_has_year in it because I felt that those columns did not pertain to the comparison between the data as they were both logical vectors.</em></p>
 <pre class="r"><code>song_match %&gt;% distinct(song) %&gt;% filter(str_detect(song, &quot;Day$&quot;))</code></pre>
 <pre><code>## # A tibble: 8 x 1
 ##   song                   
@@ -1821,7 +1821,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#aixfdeapyy .gt_table {
+#dklifpcynd .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1846,7 +1846,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   border-left-color: #D3D3D3;
 }
 
-#aixfdeapyy .gt_heading {
+#dklifpcynd .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1858,7 +1858,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   border-right-color: #D3D3D3;
 }
 
-#aixfdeapyy .gt_title {
+#dklifpcynd .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1868,7 +1868,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   border-bottom-width: 0;
 }
 
-#aixfdeapyy .gt_subtitle {
+#dklifpcynd .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1878,13 +1878,13 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   border-top-width: 0;
 }
 
-#aixfdeapyy .gt_bottom_border {
+#dklifpcynd .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#aixfdeapyy .gt_col_headings {
+#dklifpcynd .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1899,7 +1899,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   border-right-color: #D3D3D3;
 }
 
-#aixfdeapyy .gt_col_heading {
+#dklifpcynd .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1919,7 +1919,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   overflow-x: hidden;
 }
 
-#aixfdeapyy .gt_column_spanner_outer {
+#dklifpcynd .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1931,15 +1931,15 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   padding-right: 4px;
 }
 
-#aixfdeapyy .gt_column_spanner_outer:first-child {
+#dklifpcynd .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#aixfdeapyy .gt_column_spanner_outer:last-child {
+#dklifpcynd .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#aixfdeapyy .gt_column_spanner {
+#dklifpcynd .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1951,7 +1951,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   width: 100%;
 }
 
-#aixfdeapyy .gt_group_heading {
+#dklifpcynd .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1973,7 +1973,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   vertical-align: middle;
 }
 
-#aixfdeapyy .gt_empty_group_heading {
+#dklifpcynd .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1988,15 +1988,15 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   vertical-align: middle;
 }
 
-#aixfdeapyy .gt_from_md > :first-child {
+#dklifpcynd .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#aixfdeapyy .gt_from_md > :last-child {
+#dklifpcynd .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#aixfdeapyy .gt_row {
+#dklifpcynd .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2015,7 +2015,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   overflow-x: hidden;
 }
 
-#aixfdeapyy .gt_stub {
+#dklifpcynd .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2027,7 +2027,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   padding-left: 12px;
 }
 
-#aixfdeapyy .gt_summary_row {
+#dklifpcynd .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2037,7 +2037,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   padding-right: 5px;
 }
 
-#aixfdeapyy .gt_first_summary_row {
+#dklifpcynd .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2047,7 +2047,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   border-top-color: #D3D3D3;
 }
 
-#aixfdeapyy .gt_grand_summary_row {
+#dklifpcynd .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2057,7 +2057,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   padding-right: 5px;
 }
 
-#aixfdeapyy .gt_first_grand_summary_row {
+#dklifpcynd .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2067,11 +2067,11 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   border-top-color: #D3D3D3;
 }
 
-#aixfdeapyy .gt_striped {
+#dklifpcynd .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#aixfdeapyy .gt_table_body {
+#dklifpcynd .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2080,7 +2080,7 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   border-bottom-color: #D3D3D3;
 }
 
-#aixfdeapyy .gt_footnotes {
+#dklifpcynd .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2094,13 +2094,13 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   border-right-color: #D3D3D3;
 }
 
-#aixfdeapyy .gt_footnote {
+#dklifpcynd .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#aixfdeapyy .gt_sourcenotes {
+#dklifpcynd .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2114,46 +2114,46 @@ tidycor %&gt;% gt %&gt;% tab_header(title = md(&quot;**Correlation Between Numer
   border-right-color: #D3D3D3;
 }
 
-#aixfdeapyy .gt_sourcenote {
+#dklifpcynd .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#aixfdeapyy .gt_left {
+#dklifpcynd .gt_left {
   text-align: left;
 }
 
-#aixfdeapyy .gt_center {
+#dklifpcynd .gt_center {
   text-align: center;
 }
 
-#aixfdeapyy .gt_right {
+#dklifpcynd .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#aixfdeapyy .gt_font_normal {
+#dklifpcynd .gt_font_normal {
   font-weight: normal;
 }
 
-#aixfdeapyy .gt_font_bold {
+#dklifpcynd .gt_font_bold {
   font-weight: bold;
 }
 
-#aixfdeapyy .gt_font_italic {
+#dklifpcynd .gt_font_italic {
   font-style: italic;
 }
 
-#aixfdeapyy .gt_super {
+#dklifpcynd .gt_super {
   font-size: 65%;
 }
 
-#aixfdeapyy .gt_footnote_marks {
+#dklifpcynd .gt_footnote_marks {
   font-style: italic;
   font-size: 65%;
 }
 </style>
-<div id="aixfdeapyy" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<div id="dklifpcynd" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   <thead class="gt_header">
     <tr>
       <th colspan="3" class="gt_heading gt_title gt_font_normal" style><strong>Correlation Between Numeric Variables</strong></th>
