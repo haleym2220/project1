@@ -142,7 +142,7 @@ ggplot(song_match, aes(x = Month, y = my_playcount))+
 *This graph shows the average amount of times I repeated a song last year. I apparently liked to re-listen to songs the most during December of 2020 with an average of about 4.7 plays. This could be due to the fact that Christmas is in December, which can lead to the constant repeat of songs.*
 
 ```{R}
-tidycor %>% ggplot(aes(var1,var2,fill=correlation))+ geom_tile()+ scale_fill_gradient2(low="red",mid="gray",high="blue")+ geom_text(aes(label=round(correlation,2)),color = "black", size = 4)+ theme(axis.text.x = element_text(angle = 90, hjust=1))+ coord_fixed()
+tidycor %>% ggplot(aes(var1,var2,fill=correlation))+ geom_tile()+ scale_fill_gradient2(low="red",mid="gray",high="blue")+ ggtitle("Correlation Plot of Numeric Variables") + geom_text(aes(label=round(correlation,2)),color = "black", size = 4)+ theme(axis.text.x = element_text(angle = 90, hjust=1))+ coord_fixed()
 ```
 
 *This plot visualizes the correlation between all of the numeric statistics present in the data set. There were no significant findings in the correlation between the variables, but I did find it interesting that there is a positive correlation between release year and my playcount and a negative correlation between release year and the radio playcount. This chart visualizes the findings from the summary statistics data. Even though plot 1 shows that I tend to appreciate newer music more, this shows that that is not a significant finding as the correlation is not too strong r=0.44).*
